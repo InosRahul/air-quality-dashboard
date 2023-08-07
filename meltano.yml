@@ -1,0 +1,80 @@
+version: 1
+default_environment: dev
+project_id: 3cd72077-f3c7-4c8a-b9d7-41b5e56843ec
+environments:
+- name: dev
+- name: staging
+- name: prod
+plugins:
+  extractors:
+    - name: tap-spreadsheets-anywhere
+      variant: ets
+      pip_url: git+https://github.com/ets/tap-spreadsheets-anywhere.git
+      config:
+        tables:
+          - path: 'file://./data'
+            name: air_quality_2023
+            pattern: who_ambient_air_quality_2023.csv
+            start_date: '2001-01-01T00:00:00Z'
+            prefer_schema_as_string: true
+            key_properties: ['who_region', 'iso3']   
+            format: csv
+  loaders:
+    - name: target-parquet
+      variant: estrategiahq
+      pip_url: git+https://github.com/estrategiahq/target-parquet.git
+      config:
+        destination_path: $MELTANO_PROJECT_ROOT/data/data_catalog/air_quality
+        compression_method: snappy
+        file_size: 100000
+        logging_level: info
+        disable_collection: true
+  utilities:
+    - name: dbt-duckdb
+      variant: jwills
+      pip_url: dbt-core~=1.5.2 dbt-duckdb~=1.5.2 git+https://github.com/meltano/dbt-ext.git@main
+      executable: dbt_invoker
+      settings:
+        - name: project_dir
+          value: $MELTANO_PROJECT_ROOT/transform
+          label: Projects Directory
+        - name: skip_pre_invoke
+          env: DBT_EXT_SKIP_PRE_INVOKE
+          kind: boolean
+          value: true
+          description:
+            Whether to skip pre-invoke hooks which automatically run dbt clean
+            and deps
+        - name: type
+          env: DBT_EXT_TYPE
+          value: duckdb
+        - name: profiles_dir
+          env: DBT_PROFILES_DIR
+          value: $MELTANO_PROJECT_ROOT/transform/profiles/duckdb
+          label: Profiles Directory
+        - name: project_dir
+          value: $MELTANO_PROJECT_ROOT/transform
+          label: Projects Directory
+        - name: path
+          kind: string
+          label: Path
+          description:
+              The path on your local filesystem where you would like the DuckDB
+              database file and it's associated write-ahead log to be written.
+        - name: schema
+          kind: string
+          value: main
+          label: Schema
+          description: Specify the schema to write into.
+      commands:
+        build:
+          args: build
+          description: Will run your models, tests, snapshots and seeds in DAG order.
+        describe:
+          args: describe
+          executable: dbt_extension
+        initialize:
+          args: initialize
+          executable: dbt_extension
+      config:
+        path: $MELTANO_PROJECT_ROOT/data/data_catalog/mdsbox.db
