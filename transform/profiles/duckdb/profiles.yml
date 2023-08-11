@@ -1,0 +1,20 @@
+# DuckDB config reference:
+config:
+  send_anonymous_usage_stats: False
+  use_colors: True
+meltano:
+  target: "{{ env_var('MELTANO_ENVIRONMENT', 'dev') }}"
+  outputs:
+    dev:
+      type: duckdb
+      threads: 4
+      external_root: "{{ env_var('MELTANO_PROJECT_ROOT') }}/data"
+      path: "{{ env_var('DBT_DUCKDB_PATH') }}"
+    staging:
+      type: duckdb
+      threads: 4
+      external_root: /tmp
+    prod:
+      type: duckdb
+      threads: 4
+      external_root: /tmp
