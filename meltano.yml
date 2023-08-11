@@ -26,13 +26,12 @@ plugins:
       config:
         destination_path: $MELTANO_PROJECT_ROOT/data/data_catalog/air_quality
         compression_method: snappy
-        file_size: 100000
         logging_level: info
         disable_collection: true
   utilities:
     - name: dbt-duckdb
       variant: jwills
-      pip_url: dbt-core~=1.5.2 dbt-duckdb~=1.5.2 git+https://github.com/meltano/dbt-ext.git@main
+      pip_url: dbt-core~=1.5.2 dbt-duckdb~=1.5.2 git+https://github.com/meltano/dbt-ext.git@main duckdb==0.8.1
       executable: dbt_invoker
       settings:
         - name: project_dir
