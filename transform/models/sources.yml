@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: who
+    meta:
+      external_location: "{{ env_var('MELTANO_PROJECT_ROOT') }}/data/data_catalog/air_quality/*.parquet"
+    tables: 
+      - name: air_quality
+        description: air quality data
