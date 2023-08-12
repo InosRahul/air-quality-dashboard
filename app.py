@@ -2,7 +2,7 @@ import streamlit as st
 import duckdb
 
 
-aqi_duck = duckdb.connect('./data/data_catalog/mdsbox.db', read_only=True)
+aqi_duck = duckdb.connect('mdsbox.db', read_only=True)
 
 # Sidebar filters
 selected_country = st.sidebar.selectbox("Select Country", aqi_duck.execute("SELECT DISTINCT country_name FROM air_quality").fetchdf()['country_name'])
