@@ -4,7 +4,6 @@
 /transform/dbt_packages
 /transform/.tmp
 /docs/run
-/data/data_catalog
 /output
 /logs
 .DS_Store
