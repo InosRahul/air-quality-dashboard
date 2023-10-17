@@ -1,4 +1,4 @@
 streamlit
-duckdb
+duckdb==0.8.1
 meltano
 dbt-core
